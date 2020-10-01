@@ -1,15 +1,19 @@
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
-from mysite.salary.forms import CompleteUserForm, LoginForm, ProfileForm
-from mysite.salary.models import UserProfile
+from .forms import CompleteUserForm, ProfileForm, LoginForm
+from .models import UserProfile, User
 
 def index(request):
-    return HttpResponse("Hello")
+    context = {}
+    if request.user is not None:
+        context['user'] = request.user
+    return render(request, 'salary/index.html', context)
+
 
 
 def login_view(request):
@@ -19,7 +23,7 @@ def login_view(request):
             user = authenticate(username=form.cleaned_data['user_name'], password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect(reverse('salary:profile'))
+                return HttpResponseRedirect(reverse('salary:index'))
     else:
         form = LoginForm()
     context = {'form': form}
@@ -59,3 +63,10 @@ def new_profile(request, username):
         form = ProfileForm()
     context = {'user': user, 'form': form}
     return render(request, 'salary/new-profile.html', context)
+
+
+def logout(request):
+    request.session.flush()
+    if hasattr(request, 'user'):
+        request.user = AnonymousUser()
+    return HttpResponseRedirect(reverse('salary:index'))

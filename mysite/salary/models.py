@@ -11,7 +11,7 @@ class UserProfile(models.Model):
     age = models.IntegerField(default=0)
     address = models.CharField(max_length=100, default="")
     is_admin = models.BooleanField(default=False)
-    payment = models.IntegerField(default=29.12)
+    payment = models.IntegerField(default=29)
 
 
     def __str__(self):

@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-
-from mysite.salary.models import UserProfile
+from .models import UserProfile
 
 
 class LoginForm(forms.Form):
@@ -19,7 +18,7 @@ class UserForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('address', 'age')
+        fields = ('address', 'age', 'payment')
         
         
 class CompleteUserForm(UserCreationForm):  # create user - django
