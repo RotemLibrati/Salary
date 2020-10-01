@@ -1,0 +1,12 @@
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+    <form action="{% url 'salary:new-profile' user.username %}" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Finish registration</button>
+
+</form>

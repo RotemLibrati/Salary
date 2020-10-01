@@ -1,0 +1,10 @@
+
+    <h1>New User</h1>
+
+    <form action="{% url 'salary:new-user' %} " method="POST">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        <button type="submit"> Submit </button>
+    </form>
+
+
