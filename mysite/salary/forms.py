@@ -68,8 +68,17 @@ class AddShifts(forms.Form):
                    , ('9', '9'), ('9', '9'))
     PERCENT175 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'))
     PERCENT200 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'))
-    percent100 = forms.IntegerField(widget=forms.Select(choices=PERCENT100))
-    percent125 = forms.IntegerField(widget=forms.Select(choices=PERCENT125))
-    percent150 = forms.IntegerField(widget=forms.Select(choices=PERCENT150))
+    percent100 = forms.IntegerField(widget=forms.Select(choices=PERCENT100), initial=9)
+    percent125 = forms.IntegerField(widget=forms.Select(choices=PERCENT125), initial=2)
+    percent150 = forms.IntegerField(widget=forms.Select(choices=PERCENT150), initial=1)
     percent175 = forms.IntegerField(widget=forms.Select(choices=PERCENT175))
     percent200 = forms.IntegerField(widget=forms.Select(choices=PERCENT200))
+    bonus = forms.IntegerField(initial=0)
+    comment = forms.CharField(required=False)
+
+
+class ChooseMonth(forms.Form):
+    MONTH = (('1', 'January-1'), ('2', 'February-2'), ('3', 'March-3'), ('4', 'April-4'), ('5', 'May-5'),
+             ('6', 'June-6'), ('7', 'July-7'), ('8', 'August-8'),('9', 'September-9'), ('10', 'October-10')
+            , ('11', 'November-11'), ('12', 'December-12'))
+    month = forms.IntegerField(widget=forms.Select(choices=MONTH))

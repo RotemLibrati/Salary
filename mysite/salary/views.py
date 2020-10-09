@@ -1,5 +1,7 @@
 from datetime import datetime
-
+# from django.contrib.messages import constants as message_constants
+# MESSAGE_LEVEL = message_constants.WARNING
+from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save
@@ -7,7 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
-from .forms import CompleteUserForm, ProfileForm, LoginForm, ChangePaymentForm, AddShifts
+from .forms import CompleteUserForm, ProfileForm, LoginForm, ChangePaymentForm, AddShifts, ChooseMonth
 from .models import UserProfile, User, Shifts
 
 def index(request):
@@ -103,17 +105,72 @@ def add_shifts(request):
             percent150 = form.cleaned_data.get('percent150')
             percent175 = form.cleaned_data.get('percent175')
             percent200 = form.cleaned_data.get('percent200')
+            bonus = form.cleaned_data.get('bonus')
+            comment = form.cleaned_data.get('comment')
             up1 = UserProfile.objects.get(user=request.user)
-            date = '{0}/{1}/{2}'.format(month, day, year)
-            date_object = datetime.strptime(date, '%m/%d/%y')
-            time = datetime.strptime(start, '%H:%M').time()
-            time_over = datetime.strptime(over, '%H:%M').time()
-            shift = Shifts(date=date_object, start=time, over=time_over, user=up1)
-            shift.total = abs(datetime.strptime(str(time_over), '%H:%M:%S') - datetime.strptime(str(time), '%H:%M:%S'))
-            shift.total = shift.total.seconds/60/60
-            shift.save()
-            return HttpResponseRedirect(reverse('salary:index'))
+            if month == 2 and (day == 29 or day == 30 or day == 31):
+                return render(request, 'nail/not-success.html')
+            elif month == 4 and day == 31:
+                return render(request, 'nail/not-success.html')
+            elif month == 6 and day == 31:
+                return render(request, 'nail/not-success.html')
+            elif month == 9 and day == 31:
+                return render(request, 'nail/not-success.html')
+            elif month == 11 and day == 31:
+                return render(request, 'nail/not-success.html')
+            else:
+                date = '{0}/{1}/{2}'.format(month, day, year)
+                date_object = datetime.strptime(date, '%m/%d/%y')
+                time = datetime.strptime(start, '%H:%M').time()
+                time_over = datetime.strptime(over, '%H:%M').time()
+                shift = Shifts(date=date_object, start=time, over=time_over, user=up1)
+                shift.percent100 = percent100
+                shift.percent125 = percent125
+                shift.percent150 = percent150
+                shift.percent175 = percent175
+                shift.percent200 = percent200
+                shift.bonus = bonus
+                shift.comment = comment
+                total = abs(datetime.strptime(str(time_over), '%H:%M:%S') - datetime.strptime(str(time), '%H:%M:%S'))
+                shift.total_time = total.seconds/60/60
+                if (shift.percent100+shift.percent125+shift.percent150+shift.percent175+shift.percent200) - shift.total_time<=-1:
+                    return render(request, 'salary/not-success-total-time.html')
+                else:
+                    if shift.percent100 > 0:
+                        left = shift.total_time - (shift.percent100+shift.percent125+shift.percent150+shift.percent175+shift.percent200)
+                        shift.total_money = up1.payment*percent100+up1.payment*1.25*percent125+up1.payment*1.5*percent150+shift.bonus+up1.payment*1.5*left
+
+                shift.save()
+                return HttpResponseRedirect(reverse('salary:index'))
     else:
         form = AddShifts()
     context = {'form': form}
     return render(request, 'salary/add-shifts.html', context)
+
+
+def not_success(request):
+    return render(request, 'salary/not-success-total-time.html')
+
+
+def choose_month(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ChooseMonth(request.POST)
+        if form.is_valid():
+            month = form.cleaned_data.get('month')
+            up1 = UserProfile.objects.get(user=user)
+            shifts = Shifts.objects.filter(date=month)
+            return HttpResponseRedirect(reverse('salary:my-shifts'), {'month': month, 'up1': up1, 'shifts': shifts})
+    else:
+        form = ChooseMonth()
+    context = {'form': form}
+    return render(request, 'salary/choose-month.html', context)
+
+
+
+def my_shifts(request):
+    user = request.user
+    up1 = UserProfile.objects.get(user=user)
+    shifts = Shifts.objects.all()
+    context = {'up1': up1, 'shifts': shifts}
+    return render(request, 'salary/my-shifts.html', context)

@@ -1,0 +1,7 @@
+<h1>Choose month</h1>
+
+<form action="{% url 'salary:choose-month' %} " method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit"> Submit </button>
+    </form>

@@ -1,0 +1,7 @@
+<h1>My shifts</h1>
+
+<h2>hi {{ shifts.user }} Your shifts for this month</h2>
+<h2>Your shifts for month {{ month }}:</h2>
+{% for shifts in shifts %}
+    <li>{{ shifts.user }}</li>
+{% endfor %}
