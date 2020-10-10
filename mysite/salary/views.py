@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
-from .forms import CompleteUserForm, ProfileForm, LoginForm, ChangePaymentForm, AddShifts, ChooseMonth
+from .forms import CompleteUserForm, ProfileForm, LoginForm, ChangePaymentForm, AddShifts, ChooseMonth, RemoveShifts
 from .models import UserProfile, User, Shifts
 
 def index(request):
@@ -186,3 +186,12 @@ def my_shifts(request, month):
 
 def remove_shifts(request):
     user = request.user
+    up1 = UserProfile.objects.get(user=user)
+    if request.method == 'POST':
+        form = RemoveShifts(request.user, request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(reverse('salary:index'))
+    else:
+        form = RemoveShifts(request.user)
+    context = {'form': form}
+    return render(request, 'salary/remove-shifts.html', context)

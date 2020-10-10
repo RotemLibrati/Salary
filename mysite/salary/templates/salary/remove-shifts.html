@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+    <form action="{% url 'salary:remove-shifts' %}" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Delete</button>
+  <a href="{% url 'salary:index' %}">Index </a>
+
+</form>

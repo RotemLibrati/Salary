@@ -1,3 +1,4 @@
+import self as self
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -85,6 +86,14 @@ class ChooseMonth(forms.Form):
 
 
 class RemoveShifts(forms.Form):
-    set = Shifts.objects.all()
-    DATES = list(map(lambda x: (str(x.date), str(x.date)), set))
-    dates = forms.CharField(widget=forms.Select(choices=DATES))
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(RemoveShifts, self).__init__(*args, **kwargs)
+        print(self.user)
+        up1 = UserProfile.objects.get(user=self.user)
+        set = Shifts.objects.filter(user=up1)
+        print(set)
+        DATES = list(map(lambda x: (str(x.date), str(x.date)), set))
+        dates = forms.CharField(widget=forms.Select(choices=DATES))
+        print("after")
