@@ -13,4 +13,5 @@ urlpatterns = [
     path('not-success/', views.not_success, name='not-success'),
     path('my-shifts/', views.my_shifts, name='my-shifts'),
     path('choose-month/', views.choose_month, name='choose-month'),
+    path('remove-shifts/', views.remove_shifts, name='remove-shifts'),
 ]

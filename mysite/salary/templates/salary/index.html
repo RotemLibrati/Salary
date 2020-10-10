@@ -10,7 +10,8 @@
     {% if user.is_authenticated %}
         <a href="{% url 'salary:change-payment' %}">Change Your Payment</a>
         <a href="{% url 'salary:add-shifts' %}">Add shifts</a>
+        <a href="{% url 'salary:remove-shifts' %}">Remove shifts</a>
         <a href="{% url 'salary:choose-month' %}">My shifts</a>
-            <a href="{% url 'salary:logout' %}">Logout</a>
+        <a href="{% url 'salary:logout' %}">Logout</a>
             </div>
     {% endif %}

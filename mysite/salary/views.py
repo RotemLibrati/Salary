@@ -136,9 +136,14 @@ def add_shifts(request):
                 if (shift.percent100+shift.percent125+shift.percent150+shift.percent175+shift.percent200) - shift.total_time<=-1:
                     return render(request, 'salary/not-success-total-time.html')
                 else:
+                    left = shift.total_time - (shift.percent100 + shift.percent125 + shift.percent150 + shift.percent175 + shift.percent200)
+                    if left < 0:
+                        left = left*-1
                     if shift.percent100 > 0:
-                        left = shift.total_time - (shift.percent100+shift.percent125+shift.percent150+shift.percent175+shift.percent200)
                         shift.total_money = up1.payment*percent100+up1.payment*1.25*percent125+up1.payment*1.5*percent150+shift.bonus+up1.payment*1.5*left
+                    else:
+                        shift.total_money = up1.payment*1.5 * percent150 + up1.payment * 1.75 * percent175 + up1.payment * 2 * percent200 + shift.bonus + up1.payment * 2 * left
+
 
                 shift.save()
                 return HttpResponseRedirect(reverse('salary:index'))
@@ -159,8 +164,7 @@ def choose_month(request):
         if form.is_valid():
             month = form.cleaned_data.get('month')
             up1 = UserProfile.objects.get(user=user)
-            shifts = Shifts.objects.filter(date=month)
-            return HttpResponseRedirect(reverse('salary:my-shifts'), {'month': month, 'up1': up1, 'shifts': shifts})
+            return my_shifts(request, month)
     else:
         form = ChooseMonth()
     context = {'form': form}
@@ -168,9 +172,17 @@ def choose_month(request):
 
 
 
-def my_shifts(request):
+def my_shifts(request, month):
     user = request.user
     up1 = UserProfile.objects.get(user=user)
     shifts = Shifts.objects.all()
-    context = {'up1': up1, 'shifts': shifts}
+    total = 0
+    for i in shifts:
+        if i.date.month == month:
+            total = total + i.total_money
+    context = {'up1': up1, 'shifts': shifts, 'month': month, 'total': total}
     return render(request, 'salary/my-shifts.html', context)
+
+
+def remove_shifts(request):
+    user = request.user

@@ -1,7 +1,59 @@
 <h1>My shifts</h1>
 
-<h2>hi {{ shifts.user }} Your shifts for this month</h2>
+<h2>hi {{ up1 }} Your shifts for this month</h2>
 <h2>Your shifts for month {{ month }}:</h2>
-{% for shifts in shifts %}
-    <li>{{ shifts.user }}</li>
-{% endfor %}
+<html>
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 50%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 4px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+<table>
+  <tr>
+    <th>Day</th>
+    <th>Start</th>
+    <th>Over</th>
+    <th>Hours</th>
+    <th>Payment</th>
+  </tr>
+  <tr>
+    {% for shifts in shifts %}
+        {% if shifts.date.month == month %}
+            {% if shifts.user == up1 %}
+            <tr>
+                <td>{{ shifts.date }}</td>
+                <td>{{ shifts.start }}</td>
+                <td>{{ shifts.over }}</td>
+                <td>{{ shifts.total_time }}</td>
+                <td>{{ shifts.total_money }}</td>
+            </tr>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+   <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>total: {{ total }}</td>
+          </tr>
+  </tr>
+</table>
+    <a href="{% url 'salary:index' %}">Index </a>
+</body>
+</html>

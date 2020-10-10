@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Shifts
 
 
 class LoginForm(forms.Form):
@@ -48,7 +48,7 @@ class ChangePaymentForm(forms.Form):
 
 
 class AddShifts(forms.Form):
-    DAYS = (('01', '01'), ('02', '02'), ('03', '03'), ('04', '04'), ('05', '05'), ('07', '07'), ('08', '08'),
+    DAYS = (('01', '01'), ('02', '02'), ('03', '03'), ('04', '04'), ('05', '05'),('06', '06'), ('07', '07'), ('08', '08'),
             ('09', '09'), ('10', '10'), ('11', '11'), ('12', '12'), ('13', '13'), ('14', '14'), ('15', '15'),
             ('16', '16'), ('17', '17'), ('18', '18'), ('19', '19'), ('20', '20'), ('21', '21'), ('22', '22'),
             ('23', '23'), ('24', '24'), ('25', '25'), ('26', '26'), ('27', '27'), ('28', '28'), ('29', '29'),
@@ -65,7 +65,7 @@ class AddShifts(forms.Form):
                    , ('9', '9'))
     PERCENT125 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'))
     PERCENT150 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), ('6', '6'), ('7', '7'), ('8', '8')
-                   , ('9', '9'), ('9', '9'))
+                   , ('9', '9'))
     PERCENT175 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'))
     PERCENT200 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'))
     percent100 = forms.IntegerField(widget=forms.Select(choices=PERCENT100), initial=9)
@@ -82,3 +82,9 @@ class ChooseMonth(forms.Form):
              ('6', 'June-6'), ('7', 'July-7'), ('8', 'August-8'),('9', 'September-9'), ('10', 'October-10')
             , ('11', 'November-11'), ('12', 'December-12'))
     month = forms.IntegerField(widget=forms.Select(choices=MONTH))
+
+
+class RemoveShifts(forms.Form):
+    set = Shifts.objects.all()
+    DATES = list(map(lambda x: (str(x.date), str(x.date)), set))
+    dates = forms.CharField(widget=forms.Select(choices=DATES))
