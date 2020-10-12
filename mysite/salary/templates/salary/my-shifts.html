@@ -54,6 +54,26 @@ tr:nth-child(even) {
           </tr>
   </tr>
 </table>
+<h2><u>Salary</u></h2>
+<li>Base Salary: {{ base }}</li>
+<li>Bonus: {{ bonus }} </li>
+<li>Gross salary:  {{ total }} </li>
+<h2><u>Compulsory Deductions</u></h2>
+<li>Leumi insurance: {{ leumi }} </li>
+<li>Health insurance: {{ health }} </li>
+
+<h1><b>Net Salary: {{ net }}</b></h1>
+<h2><u>Monthly Summary</u></h2>
+<li>Work days {{ days }}</li>
+<li>Total hours {{ hours }}</li>
+
+<h2><u>Tariff Details</u></h2>
+<li>100% - total hours: {{ cal100 }} </li>
+<li>125% - total hours: {{ cal125 }} </li>
+<li>150% - total hours: {{ cal150 }} </li>
+<li>175% - total hours: {{ cal175 }} </li>
+<li>200% - total hours: {{ cal200 }} </li>
+<h4>Total: {{ hours }} </h4>
     <a href="{% url 'salary:index' %}">Index </a>
 </body>
 </html>

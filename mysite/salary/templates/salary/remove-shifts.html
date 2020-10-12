@@ -2,7 +2,7 @@
     <form action="{% url 'salary:remove-shifts' %}" method="POST">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Delete</button>
+  <input type="submit" value="Delete" name="_make-unique">
   <a href="{% url 'salary:index' %}">Index </a>
 
 </form>

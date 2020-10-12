@@ -1,7 +1,4 @@
 from datetime import datetime
-# from django.contrib.messages import constants as message_constants
-# MESSAGE_LEVEL = message_constants.WARNING
-from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save
@@ -139,8 +136,10 @@ def add_shifts(request):
                     left = shift.total_time - (shift.percent100 + shift.percent125 + shift.percent150 + shift.percent175 + shift.percent200)
                     if left < 0:
                         left = left*-1
-                    if shift.percent100 > 0:
+                    if shift.percent100 > 0 and shift.percent100 >=9:
                         shift.total_money = up1.payment*percent100+up1.payment*1.25*percent125+up1.payment*1.5*percent150+shift.bonus+up1.payment*1.5*left
+                    elif shift.percent100 > 0 and shift.percent100 < 9:
+                        shift.total_money = up1.payment * percent100 + up1.payment * 1.25 * percent125 + up1.payment * 1.5 * percent150 + shift.bonus + up1.payment * left
                     else:
                         shift.total_money = up1.payment*1.5 * percent150 + up1.payment * 1.75 * percent175 + up1.payment * 2 * percent200 + shift.bonus + up1.payment * 2 * left
 
@@ -177,21 +176,49 @@ def my_shifts(request, month):
     up1 = UserProfile.objects.get(user=user)
     shifts = Shifts.objects.all()
     total = 0
+    bonus = 0
+    days = 0
+    hours = 0
+    base_salary = 0
+    cal100 = 0
+    cal125 = 0
+    cal150 = 0
+    cal175 = 0
+    cal200 = 0
     for i in shifts:
-        if i.date.month == month:
+        if i.date.month == month and i.user == up1:
+            days = days + 1
             total = total + i.total_money
-    context = {'up1': up1, 'shifts': shifts, 'month': month, 'total': total}
+            bonus = bonus + i.bonus
+            hours = hours + i.total_time
+            base_salary = base_salary + (i.total_money - i.bonus)
+            cal100 = cal100 + i.percent100
+            cal125 = cal125 + i.percent125
+            cal150 = cal150 + i.percent150
+            cal175 = cal175 + i.percent175
+            cal200 = cal200 + i.percent200
+    leumi_insurance = total * 0.0355
+    health_insurance = total * 0.03
+    net_salary = total - leumi_insurance - health_insurance
+    context = {'up1': up1, 'shifts': shifts, 'month': month, 'total': total,
+               'bonus': bonus, 'leumi': leumi_insurance, 'health': health_insurance,
+               'days': days, 'hours': hours, 'base': base_salary, 'net': net_salary,
+               'cal100': cal100, 'cal125': cal125, 'cal150': cal150, 'cal175': cal175, 'cal200': cal200,}
     return render(request, 'salary/my-shifts.html', context)
 
 
 def remove_shifts(request):
     user = request.user
     up1 = UserProfile.objects.get(user=user)
+    shifts = Shifts.objects.filter(user=up1)
     if request.method == 'POST':
-        form = RemoveShifts(request.user, request.POST)
+        form = RemoveShifts(shifts, request.POST)
         if form.is_valid():
+            if "_make-unique" in request.POST:
+                dates = form.cleaned_data.get('dates')
+                shift_delete = Shifts.objects.filter(date=str(dates)).delete()
             return HttpResponseRedirect(reverse('salary:index'))
     else:
-        form = RemoveShifts(request.user)
+        form = RemoveShifts(shifts)
     context = {'form': form}
     return render(request, 'salary/remove-shifts.html', context)
