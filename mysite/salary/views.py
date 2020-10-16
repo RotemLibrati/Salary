@@ -13,6 +13,13 @@ def index(request):
     context = {}
     if request.user is not None:
         context['user'] = request.user
+        try:
+            up1 = UserProfile.objects.get(user=request.user)
+            context['up1'] = up1
+        except (TypeError, UserProfile.DoesNotExist):
+            error = "UserProfile deletion failed."
+            render(request, 'salary/index.html', {'error': error})
+
     return render(request, 'salary/index.html', context)
 
 
@@ -102,6 +109,7 @@ def add_shifts(request):
             percent150 = form.cleaned_data.get('percent150')
             percent175 = form.cleaned_data.get('percent175')
             percent200 = form.cleaned_data.get('percent200')
+            rest = form.cleaned_data.get('rest')
             bonus = form.cleaned_data.get('bonus')
             comment = form.cleaned_data.get('comment')
             up1 = UserProfile.objects.get(user=request.user)
@@ -128,22 +136,23 @@ def add_shifts(request):
                 shift.percent200 = percent200
                 shift.bonus = bonus
                 shift.comment = comment
+                shift.rest = rest
                 total = abs(datetime.strptime(str(time_over), '%H:%M:%S') - datetime.strptime(str(time), '%H:%M:%S'))
                 shift.total_time = total.seconds/60/60
-                if (shift.percent100+shift.percent125+shift.percent150+shift.percent175+shift.percent200) - shift.total_time<=-1:
+                if (shift.percent100+shift.percent125+shift.percent150+shift.percent175+shift.percent200) - shift.total_time<=-1 and shift.total_time < 12:
                     return render(request, 'salary/not-success-total-time.html')
                 else:
+                    if shift.total_time>12:
+                        shift.total_time = percent100+0.25
                     left = shift.total_time - (shift.percent100 + shift.percent125 + shift.percent150 + shift.percent175 + shift.percent200)
                     if left < 0:
                         left = left*-1
-                    if shift.percent100 > 0 and shift.percent100 >=9:
+                    if shift.percent100 > 0 and shift.percent100 >= 9:
                         shift.total_money = up1.payment*percent100+up1.payment*1.25*percent125+up1.payment*1.5*percent150+shift.bonus+up1.payment*1.5*left
                     elif shift.percent100 > 0 and shift.percent100 < 9:
                         shift.total_money = up1.payment * percent100 + up1.payment * 1.25 * percent125 + up1.payment * 1.5 * percent150 + shift.bonus + up1.payment * left
                     else:
                         shift.total_money = up1.payment*1.5 * percent150 + up1.payment * 1.75 * percent175 + up1.payment * 2 * percent200 + shift.bonus + up1.payment * 2 * left
-
-
                 shift.save()
                 return HttpResponseRedirect(reverse('salary:index'))
     else:

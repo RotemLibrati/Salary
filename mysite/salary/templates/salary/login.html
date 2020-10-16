@@ -1,9 +1,13 @@
+{% extends 'salary/SubPage.html' %}
+{% block title %}
+    <h3>Login</h3>
+{% endblock %}
 
-
-    <h1>Login</h1>
-
+{% block data %}
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Login</button>
+        <button type="submit" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Login</button>
+        <a href="{% url 'salary:index' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Back </a>
     </form>
+{% endblock %}

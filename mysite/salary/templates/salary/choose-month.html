@@ -1,7 +1,14 @@
-<h1>Choose month</h1>
+{% extends 'salary/SubPage.html' %}
+{% block title %}
+<h3>Choose month</h3>
+{% endblock %}
 
+{% block data %}
 <form action="{% url 'salary:choose-month' %} " method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit"> Submit </button>
+        <button type="submit" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1"> Submit </button>
+        <a href="{% url 'salary:index' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Back </a>
     </form>
+
+{% endblock %}

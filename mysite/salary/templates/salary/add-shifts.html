@@ -1,10 +1,16 @@
-<h1>input your shift's details</h1>
+{% extends 'salary/SubPage.html' %}
+{% block title %}
+<h3>Input your shift's details</h3>
+{% endblock %}
 
+{% block data %}
 <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-    For example: 18:00
     <div>
-        <button type="submit">Add</button>
+        <button type="submit" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Add</button>
+        <a href="{% url 'salary:index' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Back </a>
         </div>
     </form>
+
+{% endblock %}

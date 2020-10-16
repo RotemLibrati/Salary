@@ -1,5 +1,9 @@
-<h1>My shifts</h1>
+{% extends 'salary/SubPage.html' %}
+{% block title %}
+<h3>My shifts</h3>
+{% endblock %}
 
+{% block data %}
 <h2>hi {{ up1 }} Your shifts for this month</h2>
 <h2>Your shifts for month {{ month }}:</h2>
 <html>
@@ -74,6 +78,7 @@ tr:nth-child(even) {
 <li>175% - total hours: {{ cal175 }} </li>
 <li>200% - total hours: {{ cal200 }} </li>
 <h4>Total: {{ hours }} </h4>
-    <a href="{% url 'salary:index' %}">Index </a>
+    <a data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1" href="{% url 'salary:index' %}">Index </a>
 </body>
 </html>
+{% endblock %}

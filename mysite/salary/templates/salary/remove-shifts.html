@@ -1,8 +1,14 @@
+{% extends 'salary/SubPage.html' %}
+{% block title %}
+<h3>Choose date for remove </h3>
+{% endblock %}
 
+{% block data %}
     <form action="{% url 'salary:remove-shifts' %}" method="POST">
   {% csrf_token %}
   {{ form.as_p }}
-  <input type="submit" value="Delete" name="_make-unique">
-  <a href="{% url 'salary:index' %}">Index </a>
+  <input type="submit" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1" value="Delete" name="_make-unique">
+  <a href="{% url 'salary:index' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Back </a>
 
 </form>
+{% endblock %}

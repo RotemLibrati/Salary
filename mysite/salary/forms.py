@@ -60,10 +60,10 @@ class AddShifts(forms.Form):
     day = forms.IntegerField(widget=forms.Select(choices=DAYS))
     month = forms.IntegerField(widget=forms.Select(choices=MONTH))
     year = forms.IntegerField(widget=forms.Select(choices=YEAR))
-    start = forms.CharField(max_length=6)
-    over = forms.CharField(max_length=6)
+    start = forms.CharField(max_length=6, help_text="Example: 07:00")
+    over = forms.CharField(max_length=6, help_text="Example: 19:00")
     PERCENT100 =  (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), ('6', '6'), ('7', '7'), ('8', '8')
-                   , ('9', '9'))
+                   , ('9', '9'), ('10', '10'), ('11', '11'), ('12', '12'))
     PERCENT125 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'))
     PERCENT150 = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), ('6', '6'), ('7', '7'), ('8', '8')
                    , ('9', '9'))
@@ -75,6 +75,9 @@ class AddShifts(forms.Form):
     percent175 = forms.IntegerField(widget=forms.Select(choices=PERCENT175))
     percent200 = forms.IntegerField(widget=forms.Select(choices=PERCENT200))
     bonus = forms.IntegerField(initial=0)
+    CHOICES = [('yes', 'Yes'),
+               ('no', 'No')]
+  #  rest = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, label= "Does your employer pay you for rest ?")
     comment = forms.CharField(required=False)
 
 
