@@ -21,6 +21,7 @@
                                 <h1>Hi {{ up1 }} and welcome </h1>
                                 <h2>Your payment for hour is: {{ up1.payment }} </h2>
                             <a href="{% url 'salary:logout' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Logout</a>
+                            <a href="{% url 'salary:choose-month' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">My Shifts</a>
                         {% endif %}
                         {% if not user.is_authenticated %}
                             <a href="{% url 'salary:new-user' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Registration</a>
