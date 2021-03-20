@@ -1,13 +1,22 @@
 {% extends 'salary/SubPage.html' %}
 {% block title %}
     <h3>Login</h3>
+<h4>
+    {% if messages %}
+    {% for message in messages %}
+        <div style="color:Red;" class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+</h4>
 {% endblock %}
 
 {% block data %}
     <form method="POST">
+
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Login</button>
         <a href="{% url 'salary:index' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Back </a>
     </form>
+
 {% endblock %}

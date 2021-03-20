@@ -2,12 +2,16 @@ from datetime import datetime
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-
+from django.contrib import messages
+# import to our library
+from .sqlInjectionCheck import sqlInjection
 from .forms import CompleteUserForm, ProfileForm, LoginForm, ChangePaymentForm, AddShifts, ChooseMonth, RemoveShifts
 from .models import UserProfile, User, Shifts
+
+
 
 def index(request):
     context = {}
@@ -28,7 +32,13 @@ def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['user_name'], password=form.cleaned_data['password'])
+            u = form.cleaned_data['user_name']
+            p = form.cleaned_data['password']
+            u1, p1 = sqlInjection.main(u, p)
+            if u!=u1 or p!= p1:
+                messages.error(request, 'Your username/password is not legal !!!')
+                return HttpResponseRedirect(reverse('salary:login'))
+            user = authenticate(username=u, password=p)
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect(reverse('salary:index'))
@@ -79,6 +89,7 @@ def logout(request):
         request.user = AnonymousUser()
     return HttpResponseRedirect(reverse('salary:index'))
 
+
 def change_payment(request):
     user = request.user
     if request.method == 'POST':
@@ -93,6 +104,7 @@ def change_payment(request):
         form = ChangePaymentForm()
     context = {'form': form}
     return render(request, 'salary/change-payment.html', context)
+
 
 def add_shifts(request):
     user = request.user

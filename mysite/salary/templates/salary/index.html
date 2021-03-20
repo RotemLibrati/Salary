@@ -24,6 +24,9 @@
                             <a href="{% url 'salary:choose-month' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">My Shifts</a>
                         {% endif %}
                         {% if not user.is_authenticated %}
+<!--                            {% if  alert != null  %}-->
+                                <h1>a</h1>
+<!--                            {% endif %}-->
                             <a href="{% url 'salary:new-user' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Registration</a>
                             <a href="{% url 'salary:login' %}" data-scroll class="btn btn-light btn-radius btn-brd grd1 effect-1">Login</a>
                         {% endif %}
